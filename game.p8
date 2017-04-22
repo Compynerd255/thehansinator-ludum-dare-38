@@ -14,7 +14,7 @@ palt(14,true)
 --init player
 player = {}
 player.dir = 0
-player.color = 1
+player.color = 3
 player.stretch = 0
 player.sticking = true
 player.x=1
@@ -64,6 +64,7 @@ local dirinfo =
 local movespeed =
  0.1 * (4 - player.stretch)/4
 
+--traverse wall
 if btn(dirinfo[1]) then
  player[dirinfo[5]]-=movespeed
  if is_solid(
@@ -87,6 +88,21 @@ if btn(dirinfo[2]) then
  end
 end
 
+--check for fall off edge
+local belowpos=vecdir_add(
+ player,
+ dirinfo[4],
+ 0.6)
+belowpos.x+=0.5
+belowpos.y+=0.5
+if not is_solid(
+ belowpos.x,
+ belowpos.y)
+ then
+  player.sticking=false
+end
+
+--stretch and detach
 if btn(dirinfo[3]) then
  player.stretch += 0.4
  if player.stretch>4 then
@@ -116,10 +132,10 @@ end
 function update_player_float()
 
 local currentpoints={
- {player.x,player.y},
- {player.x,player.y+1},
- {player.x+1,player.y},
- {player.x+1,player.y+1}
+ {player.x+0.9,player.y+0.5},
+ {player.x+0.5,player.y+0.9},
+ {player.x+0.1,player.y+0.5},
+ {player.x+0.5,player.y+0.1}
 }
 
 local v = {}
@@ -140,13 +156,16 @@ for i=0,3 do
  end
 end
 
+local finalv={}
+finalv.x=player.x+v.x
+finalv.y=player.y+v.y
 player.x+=v.x
 player.y+=v.y
 
 if v.x<0 then
  if is_solid(
-  player.x+0.1,
-  player.y+0.1)
+  finalv.x+0.1,
+  finalv.y+0.5)
  then
   player.dir=0
   player.x=flr(player.x)+1
@@ -154,8 +173,8 @@ if v.x<0 then
  end
 elseif v.x>0 then
  if is_solid(
-  player.x+0.9,
-  player.y+0.9)
+  finalv.x+0.9,
+  finalv.y+0.5)
  then
   player.dir=1
   player.x=flr(player.x)
@@ -163,7 +182,9 @@ elseif v.x>0 then
  end
 end
 if v.y<0 then
- if is_solid(player.x,player.y)
+ if is_solid(
+  finalv.x+0.5,
+  finalv.y+0.1)
  then
   player.dir=2
   player.y=flr(player.y)+1
@@ -171,8 +192,8 @@ if v.y<0 then
  end
 elseif v.y>0 then
  if is_solid(
-  player.x+0.8,
-  player.y+0.8)
+  finalv.x+0.5,
+  finalv.y+0.9)
  then
   player.dir=3
   player.y=flr(player.y)
@@ -189,8 +210,7 @@ vecdirs={
  {0,1}
 }
 
-function vecdir_add
- (v,dir,mag)
+function vecdir_add(v,dir,mag)
 
 local u = {}
 u.x = vecdirs[dir+1][1] * mag
