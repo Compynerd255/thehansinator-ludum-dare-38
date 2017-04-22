@@ -1,0 +1,36 @@
+Faithful, One Hundred Percent
+
+Loosely based on Horton Hears a Who:
+- Player finda a clover
+- Player can sit down and talk to clover. As he does, the world fades around him 
+  and he envisions what he sees there
+  - Speech bubbles appear from the player and the flower alternately as they talk.
+- Little denziens of forest attack player
+  - Look like circles and triangles
+  - Player can guard and fend them off, but cannot fend and talk to clover at same time
+  - (Guards are perfect guards - if you get attacked, you lose HP)
+  - If you can't take another hit, the clover is stolen from you and you lose (SUCCUMB ENDING)
+- Player will walk with clover to defend it
+  - Player must continually talk to clover to establish contact and belief.
+  - If player neglects clover, they will eventually begin to doubt what they heard, which
+    will show in the coloring around the player. Eventually, the player will discard the
+	clover and leave, ending the game. (UNFAITHFUL ENDING)
+- As the player advances, they will face stronger attacks, and will eventually come
+  across a large flower.
+  - Player will investigate flower and see that it would be a safe place.
+  - Player will leave their clover there, and can freely walk left or right.
+  - They can also talk to the clover in this state, which will reveal a slightly different
+    conversation.
+  - If they walk left off the screen without their clover, they take a look back for a bit,
+    then walk away, ending the game. (NORMAL ENDING)
+  - However, they can also take the clover and continue, more determined than ever to save them.
+- In the final segment, talking becomes constant, and the player has no risk of disbelief
+  because talking is effortless and natural to them. And that's a good thing, because the
+  attacks are also more difficult than ever.
+  - The player can still be subdued in this state, which will also end the game.
+  - Defending becomes juiced as more monsters appear and assail the player.
+- As the last wave tapers off and the player books away, they eventually collapse in a clearing.
+  As they wait there, another character like the player walks onscreen from the right, noticing
+  the player lying there. She helps the player up, sits down with them, and says hello. The
+  flower says hello back, and the three of them begin to talk as the world fades to white,
+  ending the game. (TRUE FAITHFUL ENDING)
