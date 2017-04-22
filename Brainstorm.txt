@@ -1,0 +1,31 @@
+I honestly feel a little burned out by this Horton Hears a Who idea. Maybe it's the sheer
+difficulty of trying to manage a state machine like this in PICO-8, but I also feel like
+maybe I'm trying to be a bit too grand with this story. I wonder if I should tone this down
+a bit, perhaps taking it less seriously, or even rethink it entirely.
+
+The most difficult part is animating this expressive character with multiple limbs. It's
+appearing as a necessity because you don't have enough room in the PICO-8 sprite sheet
+to hard code all of the character's animations, what with the monsters and people and speech
+bubbles and trees you want to draw.
+
+Another difficult bit is the cutscenes for each of the four endings. Not only do you have
+to write handcoded animations for those, you also need to include fades and things for each
+of those characters.
+
+And honestly, the game doesn't feel quite fun without those things - this game really relies
+on its assets to express itself and provide the proper affordances and feeling to the player.
+I think I've bitten off a little more than I can chew with this idea - perhaps I can shelve
+it or its components for another time.
+
+So, what else can I come up with for the theme "A Small World"?
+
+~~~
+
+- You could reimplement Slime, your cell crawling game. And if you make the environment
+  a little more cell-like, you could probably do some interesting stuff.
+- You could also write your DNA Transcription RTS - have genes and transcribe them at will
+  to make your cell do interesting (or dangerous) things.
+- Something with insects? You could convey smallness with water droplets and blades of grass,
+  using aesthetics similar to those in a Bug's Life.
+- A different tack - being stuck in a car (e.g. like Strong Bad and The Cheat in the Gremlin)
+  - This one could be fun as a text adventure.
