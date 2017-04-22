@@ -16,6 +16,7 @@ player = {}
 player.dir = 0
 player.color = 1
 player.stretch = 0
+player.sticking = true
 player.x=1
 player.y=1
 
@@ -47,6 +48,16 @@ end
 
 function update_player()
 
+if player.sticking then
+ update_player_stick()
+else
+ update_player_float()
+end
+
+end
+
+function update_player_stick()
+
 local dirinfo = 
  dirinfoset[player.dir+1]
 
@@ -56,8 +67,8 @@ local movespeed =
 if btn(dirinfo[1]) then
  player[dirinfo[5]]-=movespeed
  if is_solid(
-  player.x,
-  player.y)
+  player.x+0.05,
+  player.y+0.05)
  then
   player[dirinfo[5]] =
    flr(player[dirinfo[5]])+1
@@ -67,8 +78,8 @@ end
 if btn(dirinfo[2]) then
  player[dirinfo[5]]+=movespeed
  if is_solid(
-  player.x+0.9,
-  player.y+0.9)
+  player.x+0.95,
+  player.y+0.95)
  then
   player[dirinfo[5]] =
    flr(player[dirinfo[5]])
@@ -88,6 +99,8 @@ if btn(dirinfo[3]) then
   if is_solid(newv.x,newv.y)
   then
    player.dir = dirinfo[3]
+  else
+   player.sticking=false
   end
   player.stretch=3.9
  end
@@ -98,6 +111,75 @@ else
  end
 end
 
+end
+
+function update_player_float()
+
+local currentpoints={
+ {player.x,player.y},
+ {player.x,player.y+1},
+ {player.x+1,player.y},
+ {player.x+1,player.y+1}
+}
+
+local v = {}
+v.x=0
+v.y=0
+
+for p in all(currentpoints) do
+ local m=
+  mget(flr(p[1]),flr(p[2]))
+ if m>=1 and m<=4 then
+  v=vecdir_add(v,m-1,0.05)
+ end
+end
+
+for i=0,3 do
+ if btn(i) then
+  v=vecdir_add(v,i,0.06)
+ end
+end
+
+player.x+=v.x
+player.y+=v.y
+
+if v.x<0 then
+ if is_solid(
+  player.x+0.1,
+  player.y+0.1)
+ then
+  player.dir=0
+  player.x=flr(player.x)+1
+  player.sticking=true
+ end
+elseif v.x>0 then
+ if is_solid(
+  player.x+0.9,
+  player.y+0.9)
+ then
+  player.dir=1
+  player.x=flr(player.x)
+  player.sticking=true
+ end
+end
+if v.y<0 then
+ if is_solid(player.x,player.y)
+ then
+  player.dir=2
+  player.y=flr(player.y)+1
+  player.sticking=true
+ end
+elseif v.y>0 then
+ if is_solid(
+  player.x+0.8,
+  player.y+0.8)
+ then
+  player.dir=3
+  player.y=flr(player.y)
+  player.sticking=true
+ end
+end
+ 
 end
 
 vecdirs={
@@ -133,9 +215,9 @@ local j=0
 for i=cx-8,cx+9 do
  for j=cy-8,cy+9 do
   local m=mget(flr(i),flr(j))
-  if m >= 16 then
+  --if m >= 16 then
    spr(m,i*8,j*8)
-  end
+  --end
  end
 end
 
@@ -145,8 +227,12 @@ function draw_slime(slime)
 
 local s = slime.dir
 s += (slime.color * 4)
-s += (flr(slime.stretch) * 16)
-s += 64
+if slime.sticking then
+ s += (flr(slime.stretch) * 16)
+ s += 64
+else
+ s += 32
+end
 
 spr(s,slime.x*8,slime.y*8)
 
@@ -169,20 +255,20 @@ eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 288888822888888228888882288888821cccccc11cccccc11cccccc11cccccc13bbbbbb33bbbbbb33bbbbbb33bbbbbb349999994499999944999999449999994
 22222222222222222222222222222222111111111111111111111111111111113333333333333333333333333333333344444444444444444444444444444444
 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+eee222eeeee222eeee22eeeeee222eeeeee111eeeee111eeee11eeeeee111eeeeee333eeeee333eeee33eeeeee333eeeeee444eeeee444eeee44eeeeee444eee
+ee28882eee28882ee28822eee28882eeee1ccc1eee1ccc1ee1cc11eee1ccc1eeee3bbb3eee3bbb3ee3bb33eee3bbb3eeee49994eee49994ee49944eee49994ee
+e288882eee28882ee288882ee288882ee1cccc1eee1ccc1ee1cccc1ee1cccc1ee3bbbb3eee3bbb3ee3bbbb3ee3bbbb3ee499994eee49994ee499994ee499994e
+e28882eee288882ee288882ee288882ee1ccc1eee1cccc1ee1cccc1ee1cccc1ee3bbb3eee3bbbb3ee3bbbb3ee3bbbb3ee49994eee499994ee499994ee499994e
+e28882eee28882eeee28882eee22882ee1ccc1eee1ccc1eeee1ccc1eee11cc1ee3bbb3eee3bbb3eeee3bbb3eee33bb3ee49994eee49994eeee49994eee44994e
+ee222eeeee222eeeeee222eeeeee22eeee111eeeee111eeeeee111eeeeee11eeee333eeeee333eeeeee333eeeeee33eeee444eeeee444eeeeee444eeeeee44ee
 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+ee2222eeeee222eeee222eeeee2222eeee1111eeeee111eeee111eeeee1111eeee3333eeeee333eeee333eeeee3333eeee4444eeeee444eeee444eeeee4444ee
+e288882eee28882ee28882eee288882ee1cccc1eee1ccc1ee1ccc1eee1cccc1ee3bbbb3eee3bbb3ee3bbb3eee3bbbb3ee499994eee49994ee49994eee499994e
+e288882ee288882ee288882ee288882ee1cccc1ee1cccc1ee1cccc1ee1cccc1ee3bbbb3ee3bbbb3ee3bbbb3ee3bbbb3ee499994ee499994ee499994ee499994e
+e288882ee288882ee288882ee288882ee1cccc1ee1cccc1ee1cccc1ee1cccc1ee3bbbb3ee3bbbb3ee3bbbb3ee3bbbb3ee499994ee499994ee499994ee499994e
+e28882eee288882ee288882eee28882ee1ccc1eee1cccc1ee1cccc1eee1ccc1ee3bbb3eee3bbbb3ee3bbbb3eee3bbb3ee49994eee499994ee499994eee49994e
+ee222eeeee2222eeee2222eeeee222eeee111eeeee1111eeee1111eeeee111eeee333eeeee3333eeee3333eeeee333eeee444eeeee4444eeee4444eeeee444ee
 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 e22eeeeeeeeee22ee222222eeeeeeeeee11eeeeeeeeee11ee111111eeeeeeeeee33eeeeeeeeee33ee333333eeeeeeeeee44eeeeeeeeee44ee444444eeeeeeeee
 2882eeeeeeee288228888882eeeeeeee1cc1eeeeeeee1cc11cccccc1eeeeeeee3bb3eeeeeeee3bb33bbbbbb3eeeeeeee4994eeeeeeee499449999994eeeeeeee
