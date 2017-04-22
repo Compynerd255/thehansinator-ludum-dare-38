@@ -37,8 +37,10 @@ end
 function _draw()
 
 cls(14)
-camera(0,0)
-draw_map(8,8)
+local cx=(player.x)
+local cy=(player.y)
+camera((cx*8)-60,(cy*8)-60)
+draw_map(flr(cx),flr(cy))
 draw_slime(player)
 
 end
@@ -80,7 +82,9 @@ if btn(dirinfo[3]) then
   local newv=vecdir_add(
    player,
    dirinfo[3],
-   1)
+   0.6)
+  newv.x += 0.5
+  newv.y += 0.5
   if is_solid(newv.x,newv.y)
   then
    player.dir = dirinfo[3]
@@ -126,8 +130,8 @@ function draw_map(cx,cy)
 
 local i=0
 local j=0
-for i=cx-8,cx+8 do
- for j=cy-8,cy+8 do
+for i=cx-8,cx+9 do
+ for j=cy-8,cy+9 do
   local m=mget(flr(i),flr(j))
   if m >= 16 then
    spr(m,i*8,j*8)
