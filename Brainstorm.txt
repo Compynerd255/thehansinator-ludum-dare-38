@@ -23,8 +23,12 @@ So, what else can I come up with for the theme "A Small World"?
 
 - You could reimplement Slime, your cell crawling game. And if you make the environment
   a little more cell-like, you could probably do some interesting stuff.
+  - Technically, this isn't from scratch, but your old source is gone, so you'd have to
+    reimplement what you wrote.
+  - You can probably do things like water currents and more organic walls.
 - You could also write your DNA Transcription RTS - have genes and transcribe them at will
   to make your cell do interesting (or dangerous) things.
+  - This would be a normal HTML5 game, since you need point and click.
 - Something with insects? You could convey smallness with water droplets and blades of grass,
   using aesthetics similar to those in a Bug's Life.
 - A different tack - being stuck in a car (e.g. like Strong Bad and The Cheat in the Gremlin)
