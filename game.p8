@@ -5,10 +5,10 @@ __lua__
 --thehansinator
 
 dirinfoset={
- {2,3,1,0,"y","x"},
- {2,3,0,1,"y","x"},
- {0,1,3,2,"x","y"},
- {0,1,2,3,"x","y"}
+ {3,4,2,1,"y","x"},
+ {3,4,1,2,"y","x"},
+ {1,2,4,3,"x","y"},
+ {1,2,3,4,"x","y"}
 }
 
 fieldwidth=32
@@ -35,7 +35,13 @@ end
 function _update()
 
 update_tiles()
-update_player()
+update_slime(player,{
+ btn(0),
+ btn(1),
+ btn(2),
+ btn(3),
+ btn(4),
+ btn(5)})
 
 end
 
@@ -110,53 +116,57 @@ end
 
 end --update_tile_cell
 
-function update_player()
+function update_slime
+ (slime,btns)
 
-if player.sticking then
- update_player_stick()
+if slime.sticking then
+ update_slime_stick(
+  slime,btns)
 else
- update_player_float()
+ update_slime_float(
+  slime,btns)
 end
 
 end
 
-function update_player_stick()
+function update_slime_stick
+ (slime,btns)
 
 local dirinfo = 
- dirinfoset[player.dir+1]
+ dirinfoset[slime.dir+1]
 
 local movespeed =
- 0.1 * (4 - player.stretch)/4
+ 0.1 * (4 - slime.stretch)/4
 
 --traverse wall
-if btn(dirinfo[1]) then
- player[dirinfo[5]]-=movespeed
+if btns[dirinfo[1]] then
+ slime[dirinfo[5]]-=movespeed
  if is_solid(
-  player.x+0.05,
-  player.y+0.05)
+  slime.x+0.05,
+  slime.y+0.05)
  then
-  player[dirinfo[5]] =
-   flr(player[dirinfo[5]])+1
-  player.dir=dirinfo[1]
+  slime[dirinfo[5]] =
+   flr(slime[dirinfo[5]])+1
+  slime.dir=dirinfo[1]-1
  end
 end
-if btn(dirinfo[2]) then
- player[dirinfo[5]]+=movespeed
+if btns[dirinfo[2]] then
+ slime[dirinfo[5]]+=movespeed
  if is_solid(
-  player.x+0.95,
-  player.y+0.95)
+  slime.x+0.95,
+  slime.y+0.95)
  then
-  player[dirinfo[5]] =
-   flr(player[dirinfo[5]])
-  player.dir=dirinfo[2]
+  slime[dirinfo[5]] =
+   flr(slime[dirinfo[5]])
+  slime.dir=dirinfo[2]-1
  end
 end
 
 --check for fall off edge
 --move towards wall to corner
 local belowpos=vecdir_add(
- player,
- dirinfo[4],
+ slime,
+ dirinfo[4]-1,
  0.6)
 belowpos.x+=0.5
 belowpos.y+=0.5
@@ -164,47 +174,48 @@ if not is_solid(
  belowpos.x,
  belowpos.y)
 then
-  player.sticking=false
+  slime.sticking=false
 end
 
 --stretch and detach
-if btn(dirinfo[3]) then
- player.stretch += 0.4
- if player.stretch>4 then
+if btns[dirinfo[3]] then
+ slime.stretch += 0.4
+ if slime.stretch>4 then
   local newv=vecdir_add(
-   player,
+   slime,
    dirinfo[3],
    0.6)
   newv.x += 0.5
   newv.y += 0.5
-  player.dir = dirinfo[3]
+  slime.dir = dirinfo[3]-1
   if not is_solid(newv.x,newv.y)
   then
-   player.sticking=false
+   slime.sticking=false
   end
-  player.stretch=3.9
+  slime.stretch=3.9
  end
 else
- player.stretch -= 0.6
- if player.stretch<0 then
-  player.stretch=0
+ slime.stretch -= 0.6
+ if slime.stretch<0 then
+  slime.stretch=0
  end
 end
 
 --press Ž to unstick
-if btnp(4) then
- player.sticking=false
+if btns[5] then
+ slime.sticking=false
 end
 
 end
 
-function update_player_float()
+function update_slime_float
+ (slime,btns)
 
 local currentpoints={
- {player.x+0.9,player.y+0.5},
- {player.x+0.5,player.y+0.9},
- {player.x+0.1,player.y+0.5},
- {player.x+0.5,player.y+0.1}
+ {slime.x+0.9,slime.y+0.5},
+ {slime.x+0.5,slime.y+0.9},
+ {slime.x+0.1,slime.y+0.5},
+ {slime.x+0.5,slime.y+0.1}
 }
 
 local v = {}
@@ -219,35 +230,35 @@ for p in all(currentpoints) do
  end
 end
 
-for i=0,3 do
- if btn(i) then
-  v=vecdir_add(v,i,0.06)
+for i=1,4 do
+ if btns[i] then
+  v=vecdir_add(v,i-1,0.06)
  end
 end
 
 local finalv={}
-finalv.x=player.x+v.x
-finalv.y=player.y+v.y
-player.x+=v.x
-player.y+=v.y
+finalv.x=slime.x+v.x
+finalv.y=slime.y+v.y
+slime.x+=v.x
+slime.y+=v.y
 
 if v.x<0 then
  if is_solid(
   finalv.x+0.1,
   finalv.y+0.5)
  then
-  player.dir=0
-  player.x=flr(player.x)+1
-  player.sticking=true
+  slime.dir=0
+  slime.x=flr(slime.x)+1
+  slime.sticking=true
  end
 elseif v.x>0 then
  if is_solid(
   finalv.x+0.9,
   finalv.y+0.5)
  then
-  player.dir=1
-  player.x=flr(player.x)
-  player.sticking=true
+  slime.dir=1
+  slime.x=flr(slime.x)
+  slime.sticking=true
  end
 end
 if v.y<0 then
@@ -255,18 +266,18 @@ if v.y<0 then
   finalv.x+0.5,
   finalv.y+0.1)
  then
-  player.dir=2
-  player.y=flr(player.y)+1
-  player.sticking=true
+  slime.dir=2
+  slime.y=flr(slime.y)+1
+  slime.sticking=true
  end
 elseif v.y>0 then
  if is_solid(
   finalv.x+0.5,
   finalv.y+0.9)
  then
-  player.dir=3
-  player.y=flr(player.y)
-  player.sticking=true
+  slime.dir=3
+  slime.y=flr(slime.y)
+  slime.sticking=true
  end
 end
  
