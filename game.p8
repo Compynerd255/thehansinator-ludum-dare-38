@@ -11,8 +11,8 @@ dirinfoset={
  {0,1,2,3,"x","y"}
 }
 
-fieldwidth=16
-fieldheight=16
+fieldwidth=32
+fieldheight=32
 
 function _init()
 
@@ -62,10 +62,7 @@ local j
 for i=0,fieldwidth do
  for j=0,fieldheight do
   local m=mget(i,j)
-  if m>=1 and m<=5 then
-   update_tile_current(
-    i,j,m,changeorders)
-  elseif m>=16 and m<=31 then
+  if m>=16 and m<=31 then
    update_tile_cell(
     i,j,m,changeorders)
   end
@@ -75,65 +72,6 @@ end
 local c
 for c in all(changeorders) do
  mset(c.x,c.y,c.m)
-end
-
-end
-
---update empty tile with
---current
-function update_tile_current(
- x,y,m,changeorders)
-
-local cv = {}
-local vcount = 1
-cv.x=rnd(1)-.5
-cv.y=rnd(1)-.5
-if m>=1 and m<=5 then
- cv=vecdir_add(cv,m-1,1)
- vcount+=1
-end
-local i
-local j
-for i=-1,1 do
- for j=-1,1 do
- local o=mget(x+i,y+j)
- if o>=1 and o<=5 then
-  cv=vecdir_add(cv,o-1,1)
-  vcount+=1.5
- end
- end
-end
-
-cv.x /= vcount
-cv.y /= vcount
-
-local newm = m
-
-if abs(cv.x)<0.3 then cv.x=0 end
-if abs(cv.y)<0.3 then cv.y=0 end
-
-if cv.x==0 and cv.y==0 then
- newm=5
-elseif abs(cv.x)>abs(cv.y) then
- if cv.x < 0 then
-  newm=1
- else
-  newm=2
- end
-else
- if cv.y < 0 then
-  newm=3
- else
-  newm=4
- end
-end
-
-if newm != m then
- local changeorder={}
- changeorder.x=x
- changeorder.y=y
- changeorder.m=newm
- add(changeorders,changeorder)
 end
 
 end
@@ -165,12 +103,8 @@ if rnd(600)<1 then
  pos=vecdir_add(pos,d,1)
  if not is_solid(pos.x,pos.y)
  then
-  local changeorder={}
-  changeorder.x=pos.x
-  changeorder.y=pos.y
-  changeorder.m=
-   (mcol*4+16)+flr(rnd(4))
-  add(changeorders,changeorder)
+  --todo: spawn slime of that
+  --color
  end
 end
 
@@ -243,10 +177,9 @@ if btn(dirinfo[3]) then
    0.6)
   newv.x += 0.5
   newv.y += 0.5
-  if is_solid(newv.x,newv.y)
+  player.dir = dirinfo[3]
+  if not is_solid(newv.x,newv.y)
   then
-   player.dir = dirinfo[3]
-  else
    player.sticking=false
   end
   player.stretch=3.9
@@ -258,39 +191,9 @@ else
  end
 end
 
---press  to create current
+--press  to unstick
 if btnp(4) then
- for i=-1,1 do
-  for j=-1,1 do
-   local mx=player.x+0.5+i
-   local my=player.y+0.5+j
-   if not is_solid(mx,my)
-   then
-    mset(mx,my,dirinfo[3]+1)
-   end
-  end
- end
  player.sticking=false
-end
-
-
---press — to destroy cell,
---pushing into area beneath
-if btnp(5) then
- if is_solid(
-  belowpos.x,
-  belowpos.y)
- then
-  local m=mget(
-   flr(belowpos.x),
-   flr(belowpos.y))
-  if m>=16 and m<=31 then
-   mset(
-    flr(belowpos.x),
-    flr(belowpos.y),
-    5)
-  end
- end
 end
 
 end
