@@ -33,18 +33,33 @@ player.y=1
 --init slime list
 cpu_slimes = {}
 
+--init title
+showing_title = true
+
 end
 
 function _update()
 
 update_tiles()
-update_slime(player,{
+local playerbuttons
+if not showing_title then
+ playerbuttons={
  btn(0),
  btn(1),
  btn(2),
  btn(3),
  btn(4),
- btn(5)})
+ btn(5)}
+else
+ playerbuttons={
+ false,false,false,false,
+ false,false}
+ if btnp(4) or btnp(5) then
+  showing_title=false
+ end
+end
+update_slime(player,
+ playerbuttons)
 update_cpu_slimes()
 
 end
@@ -63,6 +78,9 @@ draw_map(camx,camy)
 draw_slime(player)
 for s in all(cpu_slimes) do
  draw_slime(s)
+end
+if showing_title then
+ draw_title()
 end
 
 end
@@ -391,6 +409,31 @@ else
 end
 
 spr(s,slime.x*8,slime.y*8)
+
+end
+
+function draw_title()
+
+camera()
+rectfill(12,12,116,116,0)
+color(7)
+print("slime highways",36,14)
+print("you are",30,30)
+spr(71,72,30)
+
+print("eat",30,40)
+spr(79,60,40)
+spr(67,72,40)
+spr(75,84,40)
+
+print(
+ "ride the currents",30,70)
+print(
+ "or grip walls to stop",22,76)
+print(
+ "press Ž to ungrip",29,82)
+print(
+ "press —/Ž to start",26,108)
 
 end
 __gfx__
