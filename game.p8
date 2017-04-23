@@ -36,6 +36,9 @@ cpu_slimes = {}
 --init title
 showing_title = true
 
+--init score
+score=0
+
 end
 
 function _update()
@@ -81,6 +84,8 @@ for s in all(cpu_slimes) do
 end
 if showing_title then
  draw_title()
+else
+ draw_score()
 end
 
 end
@@ -336,6 +341,7 @@ for s in all(cpu_slimes) do
   if s.color!=player.color then
    --eat it!
    add(slimes_to_delete,s)
+   score+=1
   end
  end 
 end
@@ -409,6 +415,15 @@ else
 end
 
 spr(s,slime.x*8,slime.y*8)
+
+end
+
+function draw_score()
+
+camera()
+color(0)
+print("score: "..score.."00"
+ ,2,2)
 
 end
 
